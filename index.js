@@ -99,9 +99,15 @@ module.exports = function() {
 
                         var replace = transform(opts.transform, importName);
 
-                        var newImportSpecifier = (opts.skipDefaultConversion)
+                        var localName = memberImport.local.name;
+                        if (typeof replace.localName !== 'undefined') {
+                            localName = replace.localName;
+                        }
+
+                        var newImportSpecifier = (typeof replace.skipDefaultConversion !== 'undefined' ? replace.skipDefaultConversion : opts.skipDefaultConversion)
                             ? memberImport
-                            : types.importDefaultSpecifier(types.identifier(memberImport.local.name));
+                            : types.importDefaultSpecifier(types.identifier(localName));
+                        replace = typeof replace.transform !== 'undefined' ? replace.transform : replace
 
                         transforms.push(types.importDeclaration(
                             [newImportSpecifier],
